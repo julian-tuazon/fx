@@ -1,6 +1,6 @@
 require('dotenv').config();
 const express = require('express');
-const { getRestaurantDetails } = require('./yelp');
+const { getRestaurantDetails, graphQL } = require('./yelp');
 const { searchAllRestaurants } = require('./yelp');
 
 const db = require('./database');
@@ -360,47 +360,55 @@ app.post('/api/search/', (req, res, next) => {
   const term = req.body.term;
   const radius = req.body.radius * 1609;
 
-  searchAllRestaurants(latitude, longitude, term, location, radius)
 
-    .then(allRestaurants => {
-      const insertPromises = [];
-      for (let i = 0; i < allRestaurants.length; i++) {
+  console.log(term, typeof term);
+graphQL(latitude, longitude, term, location, radius)
+  // .then(ans => console.log(ans));
+  .then(restaurants => res.status(200).json(restaurants))
+  .catch(err => next(err));
+  //   .catch(err => next(err));
 
-        const restaurant = allRestaurants[i];
-        const yelpId = restaurant.id;
-        const restaurantName = (restaurant.name || '');
-        const yelpUrl = restaurant.url;
-        const storeImageUrl = restaurant.image_url;
-        const distance = restaurant.distance;
-        const photosUrl = [];
-        const hours = [];
-        const location = restaurant.location;
-        const categories = restaurant.categories;
-        const coordinates = restaurant.coordinates;
-        const reviews = [];
-        const price = (restaurant.price || '');
-        const rating = restaurant.rating;
+  // searchAllRestaurants(latitude, longitude, term, location, radius)
 
-        const sql = `
-      insert into  "restaurants" ("yelpId", "restaurantName", "yelpUrl", "storeImageUrl", "distance", "photosUrl", "hours", "location", "categories", "coordinates", "reviews", "price", "rating")
-        values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
-      on conflict("yelpId")
-      do nothing
-      `;
-        const val = [yelpId, restaurantName, yelpUrl, storeImageUrl, distance, JSON.stringify(photosUrl), JSON.stringify(hours), JSON.stringify(location),
-          JSON.stringify(categories), JSON.stringify(coordinates), JSON.stringify(reviews), price, rating];
+  //   .then(allRestaurants => {
+  //     const insertPromises = [];
+  //     for (let i = 0; i < allRestaurants.length; i++) {
 
-        const restaurantPromise = db.query(sql, val)
-          .then(() => {
-            return { yelpId, restaurantName, yelpUrl, storeImageUrl, distance, photosUrl, hours, location, categories, coordinates, reviews, price, rating };
-          });
-        insertPromises.push(restaurantPromise);
-      }
+  //       const restaurant = allRestaurants[i];
+  //       const yelpId = restaurant.id;
+  //       const restaurantName = (restaurant.name || '');
+  //       const yelpUrl = restaurant.url;
+  //       const storeImageUrl = restaurant.image_url;
+  //       const distance = restaurant.distance;
+  //       const photosUrl = [];
+  //       const hours = [];
+  //       const location = restaurant.location;
+  //       const categories = restaurant.categories;
+  //       const coordinates = restaurant.coordinates;
+  //       const reviews = [];
+  //       const price = (restaurant.price || '');
+  //       const rating = restaurant.rating;
 
-      return Promise.all(insertPromises);
-    })
-    .then(restaurants => res.status(200).json(restaurants))
-    .catch(err => next(err));
+  //       const sql = `
+  //     insert into  "restaurants" ("yelpId", "restaurantName", "yelpUrl", "storeImageUrl", "distance", "photosUrl", "hours", "location", "categories", "coordinates", "reviews", "price", "rating")
+  //       values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+  //     on conflict("yelpId")
+  //     do nothing
+  //     `;
+  //       const val = [yelpId, restaurantName, yelpUrl, storeImageUrl, distance, JSON.stringify(photosUrl), JSON.stringify(hours), JSON.stringify(location),
+  //         JSON.stringify(categories), JSON.stringify(coordinates), JSON.stringify(reviews), price, rating];
+
+  //       const restaurantPromise = db.query(sql, val)
+  //         .then(() => {
+  //           return { yelpId, restaurantName, yelpUrl, storeImageUrl, distance, photosUrl, hours, location, categories, coordinates, reviews, price, rating };
+  //         });
+  //       insertPromises.push(restaurantPromise);
+  //     }
+
+  //     return Promise.all(insertPromises);
+  //   })
+  //   .then(restaurants => res.status(200).json(restaurants))
+  //   .catch(err => next(err));
 
 });
 
