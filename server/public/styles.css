@@ -1,0 +1,188 @@
+body {
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  font-family: 'Roboto', Arial, Helvetica, sans-serif;
+}
+
+button, .button-outline, input {
+  border-radius: 30px;
+  background-color: transparent;
+  border: 2px solid white;
+  color: white;
+}
+
+button, .submit {
+  background-color: rgb(254, 59, 115);
+  border-radius: 30px;
+  width: 90px;
+  height: 40px;
+  color: white;
+}
+
+.stack-button {
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+}
+
+.query {
+  height: 50px;
+  border-radius: 30px;
+  background-color: white;
+  border: 2px solid rgb(254, 59, 115);
+  color: rgb(254, 59, 115);
+  text-align: center;
+}
+
+.search {
+  border-radius: 30px;
+  background-color: white;
+  border: 2px solid #B7B7B7;
+  text-align: start;
+  text-indent: 50px;
+}
+
+input, .search {
+  color: black;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 1.25rem;
+}
+
+.wrapper {
+  position: relative;
+}
+
+.mag-glass {
+  position: absolute;
+  top: 8px;
+  left: 20px;
+}
+
+.mag-glass2 {
+  position: absolute;
+  top: 6px;
+  left: 20px;
+}
+
+.gradient {
+  background: rgb(254, 59, 115);
+  background: linear-gradient(45deg, rgba(254, 59, 115, 1) 30%, rgba(255, 104, 92, 1) 100%);
+}
+
+.text-pink {
+  color: rgb(254, 59, 115);
+}
+
+.yellow {
+  color: #FFCE65;
+}
+
+.pink {
+  color: #EB606A;
+}
+
+.green {
+  color: #4CCC93;
+}
+
+.gray {
+  color: #B7B7B7;
+}
+
+h1, h3, h5, h6 {
+  font-family: 'Roboto', sans-serif;
+}
+
+.tab {
+  padding: 18px;
+  box-shadow: 2px 4px 2px #888888;
+}
+
+.cardShadow {
+  box-shadow: 2px 2px 8px #888888;
+}
+
+.navTop {
+  height: 16%;
+}
+
+.restaurantPhoto {
+  object-fit: cover;
+  height: 180px;
+  width: 100%;
+  border-radius: 15px;
+}
+
+.details-text {
+  font-size: 12px;
+}
+
+.submitButton {
+  background-color: #FF3B74;
+  border-radius: 30px;
+}
+
+.foodCategory {
+  list-style-type: none;
+  font-size: 1.5rem;
+}
+
+.hover {
+  cursor: pointer;
+}
+
+input[type=range] {
+  -webkit-appearance: none;
+  background: transparent;
+}
+
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  background: rgb(254, 59, 115);
+  height: 21px;
+  width: 21px;
+  margin-top: -8px;
+  border-radius: 99px;
+  cursor: pointer;
+}
+
+input[type=range]::-webkit-slider-runnable-track {
+  width: 800px;
+  height: 8px;
+  background: #ddd;
+}
+
+.miles {
+  font-size: 1.5rem;
+}
+
+.effect1:hover {
+  box-shadow: 1px 1px 10px 2px #cccccc;
+}
+
+.effect2:hover {
+  box-shadow: 1px 1px 10px 1px #eeeeee;
+}
+
+.underline {
+  color: #FF3B74;
+  position: relative;
+}
+
+.underline:after {
+  background: none repeat scroll 0 0 transparent;
+  bottom: 0;
+  content: "";
+  display: block;
+  height: 2px;
+  position: absolute;
+  background: linear-gradient(90deg, rgba(150,150,150,1) 0%, rgba(0,25,57,0) 100%);;
+  transition: 1s ease 0s, left 1s ease 0s;
+  width: 0;
+}
+
+.underline:hover:after {
+  width: 100%;
+  left: 0;
+}
