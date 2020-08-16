@@ -1,6 +1,57 @@
 const fetch = require('node-fetch');
 const apiKey = 'Bearer ' + process.env.YELP_API_KEY;
 
+function graphQL(lat, long, term, location, radius) {
+  console.log(term, typeof term)
+  const loc = location
+    ? `location: ${location}`
+    : `latitude: ${lat}, longitude: ${long}`;
+
+  return fetch('https://api.yelp.com/v3/graphql', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: apiKey,
+      },
+      body: JSON.stringify({
+        query: `{
+          search(term: "${term}", ${loc}, radius: ${radius}, limit: 30) {
+            business {
+              photos
+              id
+              distance
+              name
+              rating
+              location {
+                city
+                state
+              }
+              hours {
+                open {
+                  end
+                  start
+                  day
+                }
+              }
+              reviews {
+                text
+                rating
+                user {
+                  name
+                }
+              }
+            }
+          }
+        }`,
+      }),
+  })
+    .then(response => response.json())
+    .then(data => {
+      console.log('graphql', data)
+      return data;
+    });
+}
+
 function searchAllRestaurants(lat, long, term, location, radius) {
   return fetch((location
     ? `https://api.yelp.com/v3/businesses/search?location=${location}&term=${term}&radius=${radius}&limit=30`
@@ -44,4 +95,4 @@ const getReviews = function (yelpId) {
     );
 };
 
-module.exports = { getRestaurantDetails, searchAllRestaurants };
+module.exports = { getRestaurantDetails, searchAllRestaurants, graphQL };
