@@ -37,7 +37,10 @@ export default class CardStack extends React.Component {
       })
     })
       .then(res => res.json())
-      .then(data => this.setState({ restaurants: data, canClick: true }))
+      .then(data => {
+        console.log(data)
+        this.setState({ restaurants: data, canClick: true })
+      })
       .catch(err => console.error(err));
   }
 
