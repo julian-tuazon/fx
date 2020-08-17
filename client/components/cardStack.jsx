@@ -60,10 +60,10 @@ export default class CardStack extends React.Component {
   likeRestaurant(yelpId, index) {
     this.setState({ canClick: false });
 
-    fetch(`/api/view/${yelpId}`)
-      .then(res => res.json())
-      .then(() => this.setState({ canClick: true }))
-      .catch(err => console.error(err));
+    // fetch(`/api/view/${yelpId}`)
+    //   .then(res => res.json())
+    //   .then(() => this.setState({ canClick: true }))
+    //   .catch(err => console.error(err));
 
     fetch('/api/likedRestaurants', {
       method: 'POST',
@@ -76,7 +76,8 @@ export default class CardStack extends React.Component {
         newArr.splice(index, 1);
         return this.setState({ restaurants: newArr, index: this.state.index % newArr.length, canRewind: false, showDetails: false });
       })
-      .catch(err => console.error(err));
+      .catch(err => console.error(err))
+      .finally(this.setState({canClick: true}));
   }
 
   handleClick(e) {
