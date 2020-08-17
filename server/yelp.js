@@ -14,7 +14,7 @@ function gqlSearchRestaurants(lat, long, term, location, radius) {
       },
       body: JSON.stringify({
         query: `{
-          search(term: "${term}", ${loc}, radius: ${radius}, limit: 30) {
+          search(term: "${term}", ${loc}, radius: ${radius}, limit: 5) {
             restaurants: business {
               photos
               id
