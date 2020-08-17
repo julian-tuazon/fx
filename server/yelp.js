@@ -20,6 +20,7 @@ function gqlSearchRestaurants(lat, long, term, location, radius) {
                 latitude
                 longitude
               }
+              price
               photos
               id
               distance
@@ -66,6 +67,7 @@ function gqlGetRestaurantDetails(yelpID) {
                 latitude
                 longitude
               }
+              price
               photos
               id
               distance
