@@ -363,12 +363,41 @@ app.post('/api/search/', (req, res, next) => {
 gqlSearchRestaurants(latitude, longitude, term, location, radius)
   // .then(ans => console.log(ans));
   .then(restaurants => {
-    const id = restaurants.data.search.restaurants[0].id;
-    console.log(restaurants);
-    return gqlGetRestaurantDetails(id);
+    // const id = restaurants.data.search.restaurants[0].id;
+    // console.log(restaurants);
+
+    if (!req.session.userInfo) return res.json([]);
+
+    const likedRestaurants = `
+    select "yelpId"
+    from "likedRestaurants"
+    where "userId" = $1
+  `;
+
+    const currentUserId = [req.session.userInfo.userId];
+    const likedRestObj = {
+      // '9R9odrlCdPfppSuN1nIwuw': true,
+      // 'XU40PxVF_V9zJqobD021cw': true,
+    };
+
+    return db.query(likedRestaurants, currentUserId)
+      // .then(result => res.json(result.rows))
+      .then(restaurants => {
+        console.log('MY RESTAURANTS', restaurants.rows);
+        for (const restaurant of restaurants.rows) {
+          likedRestObj[restaurant.yelpId] = true;
+        }
+        console.log('restaurants obj', likedRestObj)
+      })
+      .then(() => restaurants.data.search.restaurants.filter(restaurant => !(restaurant.id in likedRestObj)))
+      .catch(err => next(err));
+
+    // return restaurants.data.search.restaurants.filter(restaurant => !(restaurant.id in likedRestObj));
+  // });
+    // return gqlGetRestaurantDetails(id);
     // res.status(200).json(restaurants.data.search.restaurants)
   })
-  .then(restaurantDetails => res.status(200).json(restaurantDetails.data.restaurant))
+  .then(filteredRestaurants => res.status(200).json(filteredRestaurants))
   .catch(err => next(err));
   //   .catch(err => next(err));
 
