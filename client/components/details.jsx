@@ -65,8 +65,8 @@ export default class Details extends React.Component {
       <div className='w-75 mx-auto d-flex flex-column align-items-center justify-content-center card rounded shadow' style={{ height: '600px' }}>
         <div className='w-100 h-50 effect1'>
           <img
-            className='rounded hover' onClick={() => this.setState({ photoIndex: (this.state.photoIndex + 1) % this.props.restaurant.photosUrl.length })}
-            src={this.props.restaurant.photosUrl[this.state.photoIndex]}
+            className='rounded hover' onClick={() => this.setState({ photoIndex: (this.state.photoIndex + 1) % this.props.restaurant.photos.length })}
+            src={this.props.restaurant.photos[this.state.photoIndex]}
             alt={this.props.restaurant.restaurantName}
             style={{ objectFit: 'cover', objectPosition: 'center bottom', height: '200px', width: '100%' }} />
         </div>
