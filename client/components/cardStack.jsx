@@ -158,13 +158,13 @@ export default class CardStack extends React.Component {
           <img
             className='rounded hover effect1'
             id='details'
-            src={this.state.restaurants[this.state.index].storeImageUrl}
-            alt={this.state.restaurants[this.state.index].restaurantName}
+            src={this.state.restaurants[this.state.index].photos[0]}
+            alt={this.state.restaurants[this.state.index].name}
             onClick={this.handleClick}
             style={{ objectFit: 'cover', height: '250px', width: '100%' }} />
         </div>
         <div className='w-100 h-100 text-center text-pink font-weight-bold d-flex flex-column align-items-center justify-content-center'>
-          <div>{this.state.restaurants[this.state.index].restaurantName}</div>
+          <div>{this.state.restaurants[this.state.index].name}</div>
           <div>{this.state.restaurants[this.state.index].location.city}, {this.state.restaurants[this.state.index].location.state}</div>
           <div><i className="fas fa-map-marker-alt mr-2"></i>{(this.state.restaurants[this.state.index].distance * 0.000621371).toFixed(1)} mi</div>
         </div>
