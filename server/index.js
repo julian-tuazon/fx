@@ -360,25 +360,22 @@ app.post('/api/search/', (req, res, next) => {
   const term = req.body.term;
   const radius = req.body.radius * 1609;
 
-gqlSearchRestaurants(latitude, longitude, term, location, radius)
+  gqlSearchRestaurants(latitude, longitude, term, location, radius)
   // .then(ans => console.log(ans));
-  .then(restaurants => {
+    .then(restaurants => {
     // const id = restaurants.data.search.restaurants[0].id;
     // console.log(restaurants);
 
-    if (!req.session.userInfo) return res.json([]);
+    if (!req.session.userInfo) return res.json(restaurants.data.search.restaurants);
 
     const likedRestaurants = `
-    select "yelpId"
-    from "likedRestaurants"
-    where "userId" = $1
-  `;
+      select "yelpId"
+      from "likedRestaurants"
+      where "userId" = $1
+    `;
 
     const currentUserId = [req.session.userInfo.userId];
-    const likedRestObj = {
-      // '9R9odrlCdPfppSuN1nIwuw': true,
-      // 'XU40PxVF_V9zJqobD021cw': true,
-    };
+    const likedRestObj = {};
 
     return db.query(likedRestaurants, currentUserId)
       // .then(result => res.json(result.rows))
