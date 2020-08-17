@@ -16,6 +16,7 @@ export default class CardStack extends React.Component {
     this.toLikedRestaurant = this.toLikedRestaurant.bind(this);
     this.toCardStack = this.toCardStack.bind(this);
     this.toLocationSetting = this.toLocationSetting.bind(this);
+    this.cache = {};
   }
 
   componentDidMount() {
@@ -39,12 +40,17 @@ export default class CardStack extends React.Component {
       .then(res => res.json())
       .then(data => {
         console.log(data)
+        for (const restaurant of data) {
+          this.cache[restaurant.id] = restaurant;
+        }
+        console.log('cache', this.cache);
         this.setState({ restaurants: data, canClick: true })
       })
       .catch(err => console.error(err));
   }
 
   getRestaurantDetails(yelpId) {
+    if (this.cache[yelpId]) return this.setState({ details: this.cache[yelpId], showDetails: true });
     fetch(`/api/view/${yelpId}`)
       .then(res => res.json())
       .then(data => this.setState({ details: data, showDetails: true }))
@@ -75,7 +81,7 @@ export default class CardStack extends React.Component {
 
   handleClick(e) {
     if (!this.state.canClick) return;
-    if (e.currentTarget.id === 'like' && this.state.restaurants.length) return this.likeRestaurant(this.state.restaurants[this.state.index].yelpId, this.state.index);
+    if (e.currentTarget.id === 'like' && this.state.restaurants.length) return this.likeRestaurant(this.state.restaurants[this.state.index].id, this.state.index);
     if (e.currentTarget.id === 'pass') return this.setState({ index: (this.state.index + 1) % this.state.restaurants.length, canRewind: true, showDetails: false });
     if (e.currentTarget.id === 'rewind' && this.state.canRewind) return this.setState({ index: (this.state.index + this.state.restaurants.length - 1) % this.state.restaurants.length, canRewind: false, showDetails: false });
     if (e.currentTarget.id === 'details') return this.getRestaurantDetails(this.state.restaurants[this.state.index].id);
