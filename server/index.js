@@ -1,6 +1,6 @@
 require('dotenv').config();
 const express = require('express');
-const { getRestaurantDetails, graphQL } = require('./yelp');
+const { getRestaurantDetails, gqlSearchRestaurants, gqlGetRestaurantDetails } = require('./yelp');
 const { searchAllRestaurants } = require('./yelp');
 
 const db = require('./database');
@@ -360,11 +360,15 @@ app.post('/api/search/', (req, res, next) => {
   const term = req.body.term;
   const radius = req.body.radius * 1609;
 
-
-  console.log(term, typeof term);
-graphQL(latitude, longitude, term, location, radius)
+gqlSearchRestaurants(latitude, longitude, term, location, radius)
   // .then(ans => console.log(ans));
-  .then(restaurants => res.status(200).json(restaurants))
+  .then(restaurants => {
+    const id = restaurants.data.search.restaurants[0].id;
+    console.log(restaurants);
+    return gqlGetRestaurantDetails(id);
+    // res.status(200).json(restaurants.data.search.restaurants)
+  })
+  .then(restaurantDetails => res.status(200).json(restaurantDetails.data.restaurant))
   .catch(err => next(err));
   //   .catch(err => next(err));
 
