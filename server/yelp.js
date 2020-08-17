@@ -45,10 +45,7 @@ function gqlSearchRestaurants(lat, long, term, location, radius) {
       }),
   })
     .then(response => response.json())
-    // .then(data => {
-    //   console.log('graphql', data)
-    //   return data;
-    // });
+    .catch(error => console.error());
 }
 
 function gqlGetRestaurantDetails(yelpID) {
@@ -89,10 +86,7 @@ function gqlGetRestaurantDetails(yelpID) {
     }),
   })
     .then(response => response.json())
-    // .then(data => {
-    //   console.log('graphql details', data)
-    //   return data;
-    ;
+    .catch(error => console.error());
 }
 
 function searchAllRestaurants(lat, long, term, location, radius) {
