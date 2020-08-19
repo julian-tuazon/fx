@@ -16,6 +16,7 @@ export default class CardStack extends React.Component {
     this.toLikedRestaurant = this.toLikedRestaurant.bind(this);
     this.toCardStack = this.toCardStack.bind(this);
     this.toLocationSetting = this.toLocationSetting.bind(this);
+    this.cache = {};
   }
 
   componentDidMount() {
@@ -39,12 +40,17 @@ export default class CardStack extends React.Component {
       .then(res => res.json())
       .then(data => {
         console.log(data)
+        for (const restaurant of data) {
+          this.cache[restaurant.id] = restaurant;
+        }
+        console.log('cache', this.cache);
         this.setState({ restaurants: data, canClick: true })
       })
       .catch(err => console.error(err));
   }
 
   getRestaurantDetails(yelpId) {
+    if (this.cache[yelpId]) return this.setState({ details: this.cache[yelpId], showDetails: true });
     fetch(`/api/view/${yelpId}`)
       .then(res => res.json())
       .then(data => this.setState({ details: data, showDetails: true }))
@@ -54,10 +60,10 @@ export default class CardStack extends React.Component {
   likeRestaurant(yelpId, index) {
     this.setState({ canClick: false });
 
-    fetch(`/api/view/${yelpId}`)
-      .then(res => res.json())
-      .then(() => this.setState({ canClick: true }))
-      .catch(err => console.error(err));
+    // fetch(`/api/view/${yelpId}`)
+    //   .then(res => res.json())
+    //   .then(() => this.setState({ canClick: true }))
+    //   .catch(err => console.error(err));
 
     fetch('/api/likedRestaurants', {
       method: 'POST',
@@ -70,15 +76,16 @@ export default class CardStack extends React.Component {
         newArr.splice(index, 1);
         return this.setState({ restaurants: newArr, index: this.state.index % newArr.length, canRewind: false, showDetails: false });
       })
-      .catch(err => console.error(err));
+      .catch(err => console.error(err))
+      .finally(this.setState({canClick: true}));
   }
 
   handleClick(e) {
     if (!this.state.canClick) return;
-    if (e.currentTarget.id === 'like' && this.state.restaurants.length) return this.likeRestaurant(this.state.restaurants[this.state.index].yelpId, this.state.index);
+    if (e.currentTarget.id === 'like' && this.state.restaurants.length) return this.likeRestaurant(this.state.restaurants[this.state.index].id, this.state.index);
     if (e.currentTarget.id === 'pass') return this.setState({ index: (this.state.index + 1) % this.state.restaurants.length, canRewind: true, showDetails: false });
     if (e.currentTarget.id === 'rewind' && this.state.canRewind) return this.setState({ index: (this.state.index + this.state.restaurants.length - 1) % this.state.restaurants.length, canRewind: false, showDetails: false });
-    if (e.currentTarget.id === 'details') return this.getRestaurantDetails(this.state.restaurants[this.state.index].yelpId);
+    if (e.currentTarget.id === 'details') return this.getRestaurantDetails(this.state.restaurants[this.state.index].id);
     if (e.currentTarget.id === 'user-alt') return this.toProfile();
     if (e.currentTarget.id === 'likedRes') return this.toLikedRestaurant();
     if (e.currentTarget.id === 'arrow-left') return this.toCardStack();
@@ -158,13 +165,13 @@ export default class CardStack extends React.Component {
           <img
             className='rounded hover effect1'
             id='details'
-            src={this.state.restaurants[this.state.index].storeImageUrl}
-            alt={this.state.restaurants[this.state.index].restaurantName}
+            src={this.state.restaurants[this.state.index].photos[0]}
+            alt={this.state.restaurants[this.state.index].name}
             onClick={this.handleClick}
             style={{ objectFit: 'cover', height: '250px', width: '100%' }} />
         </div>
         <div className='w-100 h-100 text-center text-pink font-weight-bold d-flex flex-column align-items-center justify-content-center'>
-          <div>{this.state.restaurants[this.state.index].restaurantName}</div>
+          <div>{this.state.restaurants[this.state.index].name}</div>
           <div>{this.state.restaurants[this.state.index].location.city}, {this.state.restaurants[this.state.index].location.state}</div>
           <div><i className="fas fa-map-marker-alt mr-2"></i>{(this.state.restaurants[this.state.index].distance * 0.000621371).toFixed(1)} mi</div>
         </div>

@@ -14,8 +14,13 @@ function gqlSearchRestaurants(lat, long, term, location, radius) {
       },
       body: JSON.stringify({
         query: `{
-          search(term: "${term}", ${loc}, radius: ${radius}, limit: 5) {
+          search(term: "${term}", ${loc}, radius: ${radius}, limit: 30) {
             restaurants: business {
+              coordinates {
+                latitude
+                longitude
+              }
+              price
               photos
               id
               distance
@@ -58,6 +63,11 @@ function gqlGetRestaurantDetails(yelpID) {
     body: JSON.stringify({
       query: `{
           restaurant: business(id: "${yelpID}") {
+              coordinates {
+                latitude
+                longitude
+              }
+              price
               photos
               id
               distance
