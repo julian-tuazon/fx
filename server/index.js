@@ -368,17 +368,17 @@ app.get('/api/liked', (req, res, next) => {
 
   return db.query(getLikedRestaurantYelpIds, [userId])
     .then(result => result.rows)
-    .then(likedRestaurantYelpIds => {
-      gqlGetRestaurantDetails(likedRestaurantYelpIds)
-    })
+    .then(likedRestaurantYelpIds => gqlGetRestaurantDetails(likedRestaurantYelpIds))
     .then(likedRestaurants => {
-      console.log('liked res!', likedRestaurants);
       const newLikedRestaurants = {};
-      for (const restaurant in likedRestaurants) {
-        newLikedRestaurants[restaurant.id] = restaurant;
+      console.log('rest', likedRestaurants)
+      for (const property in likedRestaurants) {
+
+        const restaurantId = likedRestaurants[property].id;
+        newLikedRestaurants[restaurantId] = likedRestaurants[property];
       }
-      console.log(newLikedRestaurants);
-      return newLikedRestaurants;
+      console.log('new LIKEDDD',newLikedRestaurants);
+      res.json(newLikedRestaurants);
     })
     .catch(err => console.error(err));
 
