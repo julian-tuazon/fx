@@ -314,43 +314,108 @@ app.patch('/api/reviews', (req, res, next) => {
     .catch(err => next(err));
 });
 
-app.get('/api/view/:yelpId', (req, res, next) => {
-  const { yelpId } = req.params;
-  getRestaurantDetails(yelpId)
-    .then(newObj => {
-      const yelpId = newObj.id;
-      const photosUrl = JSON.stringify(newObj.photos || []);
-      const hours = JSON.stringify(newObj.hours || [{ open: [] }]);
-      const reviews = JSON.stringify(newObj.reviews || []);
-      const rating = newObj.rating;
+// app.get('/api/view/:yelpId', (req, res, next) => {
+//   const { yelpId } = req.params;
+//   getRestaurantDetails(yelpId)
+//     .then(newObj => {
+//       const yelpId = newObj.id;
+//       const photosUrl = JSON.stringify(newObj.photos || []);
+//       const hours = JSON.stringify(newObj.hours || [{ open: [] }]);
+//       const reviews = JSON.stringify(newObj.reviews || []);
+//       const rating = newObj.rating;
 
-      const sql = `
-      update "restaurants"
-      set
-      "photosUrl" = $2,
-      "hours" = $3,
-      "reviews" = $4,
-      "rating" = $5
-      where "yelpId" = $1;
-      `;
-      const restaurantRow = [yelpId, photosUrl, hours, reviews, rating];
+//       const sql = `
+//       update "restaurants"
+//       set
+//       "photosUrl" = $2,
+//       "hours" = $3,
+//       "reviews" = $4,
+//       "rating" = $5
+//       where "yelpId" = $1;
+//       `;
+//       const restaurantRow = [yelpId, photosUrl, hours, reviews, rating];
 
-      db.query(sql, restaurantRow)
-        .then(result => {
-          const sql = `
-        select *
-        from "restaurants"
-        where "yelpId" = $1;
-        `;
-          const value = [yelpId];
-          return db.query(sql, value)
-            .then(wholeRow => {
-              const row = wholeRow.rows[0];
-              res.status(200).json(row);
-            });
-        })
-        .catch(err => next(err));
-    });
+//       db.query(sql, restaurantRow)
+//         .then(result => {
+//           const sql = `
+//         select *
+//         from "restaurants"
+//         where "yelpId" = $1;
+//         `;
+//           const value = [yelpId];
+//           return db.query(sql, value)
+//             .then(wholeRow => {
+//               const row = wholeRow.rows[0];
+//               res.status(200).json(row);
+//             });
+//         })
+//         .catch(err => next(err));
+//     });
+// });
+
+app.get('/api/liked', (req, res, next) => {
+
+  const { userId } = req.session.userInfo;
+
+  const getLikedRestaurantYelpIds = `
+    SELECT "yelpId"
+    FROM   "likedRestaurants"
+    WHERE  "userId" = $1
+  `;
+
+  // const likedRestaurants = {};
+  // const getRestaurantDetailsPromises = [];
+
+  return db.query(getLikedRestaurantYelpIds, [userId])
+    .then(result => result.rows)
+    .then(likedRestaurantYelpIds => {
+      console.log('what are we', likedRestaurantYelpIds)
+      gqlGetRestaurantDetails(likedRestaurantYelpIds)
+    })
+    .then(likedRestaurants => {
+      console.log('liked res!', likedRestaurants);
+      return likedRestaurants;
+    })
+    .catch(err => console.error(err));
+
+
+
+  // const { yelpId } = req.params;
+  // getRestaurantDetails(yelpId)
+  //   .then(newObj => {
+  //     const yelpId = newObj.id;
+  //     const photosUrl = JSON.stringify(newObj.photos || []);
+  //     const hours = JSON.stringify(newObj.hours || [{ open: [] }]);
+  //     const reviews = JSON.stringify(newObj.reviews || []);
+  //     const rating = newObj.rating;
+
+  //     const sql = `
+  //     update "restaurants"
+  //     set
+  //     "photosUrl" = $2,
+  //     "hours" = $3,
+  //     "reviews" = $4,
+  //     "rating" = $5
+  //     where "yelpId" = $1;
+  //     `;
+  //     const restaurantRow = [yelpId, photosUrl, hours, reviews, rating];
+
+  //     db.query(sql, restaurantRow)
+  //       .then(result => {
+  //         const sql = `
+  //       select *
+  //       from "restaurants"
+  //       where "yelpId" = $1;
+  //       `;
+  //         const value = [yelpId];
+  //         return db.query(sql, value)
+  //           .then(wholeRow => {
+  //             const row = wholeRow.rows[0];
+  //             res.status(200).json(row);
+  //           });
+  //       })
+  //       .catch(err => next(err));
+  //   });
 });
 
 app.post('/api/search/', (req, res, next) => {
