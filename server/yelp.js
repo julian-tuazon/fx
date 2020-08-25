@@ -110,6 +110,7 @@ function gqlGetRestaurantDetails(yelpIds) {
     }),
   })
     .then(response => response.json())
+    .then(data => data.data)
     .catch(error => console.error());
 }
 
