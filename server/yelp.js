@@ -55,9 +55,10 @@ function gqlSearchRestaurants(lat, long, term, location, radius) {
 
 function gqlGetRestaurantDetails(yelpIds) {
   let gqlRestaurantQuery = '';
-  for (const restaurant of yelpIds) {
+  for (let i = 0; i < yelpIds.length; i++) {
+    const yelpId = yelpIds[i].yelpId;
     gqlRestaurantQuery += `
-      ${restaurant.yelpId}: business(id: "${restaurant.yelpId}") {
+      a${i}: business(id: "${yelpId}") {
           ...restaurantDetails
       }
     `
