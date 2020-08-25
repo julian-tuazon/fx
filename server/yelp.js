@@ -53,7 +53,15 @@ function gqlSearchRestaurants(lat, long, term, location, radius) {
     .catch(error => console.error());
 }
 
-function gqlGetRestaurantDetails(yelpID) {
+function gqlGetRestaurantDetails(yelpIds) {
+  let gqlRestaurantQuery = '';
+  for (const restaurant of yelpIds) {
+    gqlRestaurantQuery += `
+      ${restaurant.yelpId}: business(id: "${restaurant.yelpId}") {
+          ...restaurantDetails
+      }
+    `
+  }
   return fetch('https://api.yelp.com/v3/graphql', {
     method: 'POST',
     headers: {
@@ -61,38 +69,43 @@ function gqlGetRestaurantDetails(yelpID) {
       Authorization: apiKey,
     },
     body: JSON.stringify({
-      query: `{
-          restaurant: business(id: "${yelpID}") {
-              coordinates {
-                latitude
-                longitude
-              }
-              price
-              photos
-              id
-              distance
-              name
-              rating
-              location {
-                city
-                state
-              }
-              hours {
-                open {
-                  end
-                  start
-                  day
+      query: `
+      {
+          ${gqlRestaurantQuery}
+      }
+
+          fragment restaurantDetails on Business {
+
+                coordinates {
+                  latitude
+                  longitude
                 }
-              }
-              reviews {
-                text
+                price
+                photos
+                id
+                distance
+                name
                 rating
-                user {
-                  name
+                location {
+                  city
+                  state
                 }
-              }
-            }
-          }`,
+                hours {
+                  open {
+                    end
+                    start
+                    day
+                  }
+                }
+                reviews {
+                  text
+                  rating
+                  user {
+                    name
+                  }
+                }
+          }
+          `,
     }),
   })
     .then(response => response.json())
