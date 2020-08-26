@@ -91,8 +91,18 @@ export default class CardStack extends React.Component {
     if (e.currentTarget.id === 'arrow-left') return this.toCardStack();
   }
 
-  toLikedRestaurant(e) {
+  checkLiked() {
+    fetch('/api/liked', {
+      headers: { 'Content-Type': 'application/json' },
+    })
+      .then(res => res.json())
+      .then(data => console.log(data))
+      .catch(err => console.error(err));
+  }
+
+  async toLikedRestaurant(e) {
     this.props.saveCardStackPos(this.state.restaurants, this.state.index);
+    await this.checkLiked();
     this.props.getLikedRestaurants();
     this.props.setView('likedRestaurants');
   }
